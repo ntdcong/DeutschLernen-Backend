@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Deck } from './deck.entity';
 
 export enum UserRole {
   LEARNER = 'learner',
@@ -41,6 +43,9 @@ export class User {
 
   @Column({ nullable: true, name: 'reset_password_expires', type: 'timestamp' })
   resetPasswordExpires: Date;
+
+  @OneToMany(() => Deck, (deck) => deck.user)
+  decks: Deck[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

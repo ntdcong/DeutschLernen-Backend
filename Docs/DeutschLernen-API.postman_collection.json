@@ -1,0 +1,808 @@
+{
+    "info": {
+        "name": "DeutschLernen API",
+        "description": "Complete API documentation for DeutschLernen - German Learning Platform\n\n## Features\n- Authentication & Authorization (JWT)\n- User Management\n- Flashcard Decks Management\n- Vocabulary Words Management\n- Role-based Access Control (Admin, Teacher, Learner)\n\n## Base URL\n`http://localhost:3000`\n\n## Authentication\nMost endpoints require JWT authentication. Include the token in the Authorization header:\n```\nAuthorization: Bearer <your_access_token>\n```",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_postman_id": "deutschlernen-api-v1",
+        "version": "1.0.0"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{accessToken}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000",
+            "type": "string"
+        },
+        {
+            "key": "accessToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "refreshToken",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication",
+            "description": "User authentication and authorization endpoints",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"John Doe\",\n  \"role\": \"learner\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "description": "Register a new user account.\n\n**Roles**: learner (default), teacher, admin\n\n**Note**: Only admin users can register other admins."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                                    "    pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                                    "    console.log('Tokens saved to collection variables');",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Login with email and password.\n\n**Returns**: Access token and refresh token.\n\n**Auto-saves tokens** to collection variables for subsequent requests."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Refresh Token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                                    "    console.log('New access token saved');",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/refresh",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "refresh"
+                            ]
+                        },
+                        "description": "Get a new access token using refresh token."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Forgot Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/forgot-password",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "forgot-password"
+                            ]
+                        },
+                        "description": "Request a password reset token.\n\n**Returns**: Reset token (in development, sent in response)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Reset Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"token\": \"reset-token-here\",\n  \"newPassword\": \"newPassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/reset-password",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "reset-password"
+                            ]
+                        },
+                        "description": "Reset password using the reset token."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "description": "User management endpoints",
+            "item": [
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users"
+                            ]
+                        },
+                        "description": "Get all users.\n\n**Admin**: Returns full user data\n**Non-admin**: Returns only id and fullName"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User by ID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/users/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "user-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Get user by ID.\n\n**Admin**: Returns full user data (excluding password)\n**Non-admin**: Returns only id and fullName"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Decks",
+            "description": "Flashcard deck management endpoints",
+            "item": [
+                {
+                    "name": "Create Deck",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"German Vocabulary A1\",\n  \"isPublic\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/decks",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "decks"
+                            ]
+                        },
+                        "description": "Create a new flashcard deck.\n\n**Authorization**: All authenticated users\n\n**Important**: \n- `isPublic` defaults to `false`\n- Only **Admin** can set `isPublic = true`\n- Non-admin users will have `isPublic` forced to `false`"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Decks",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/decks",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "decks"
+                            ]
+                        },
+                        "description": "Get all accessible decks.\n\n**Returns**: User's own decks + all public decks\n\n**Ordered by**: Creation date (newest first)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Deck by ID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/decks/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "decks",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "deck-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Get deck by ID with all words.\n\n**Authorization**: Owner, Admin, or anyone if deck is public"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Deck",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Updated Deck Name\",\n  \"isPublic\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/decks/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "decks",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "deck-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Update deck.\n\n**Authorization**: Owner or Admin\n\n**Important**: Only Admin can set `isPublic = true`"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Deck",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/decks/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "decks",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "deck-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Delete deck and all its words (cascade).\n\n**Authorization**: Owner or Admin"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Shuffled Word IDs",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/decks/:id/shuffled-ids",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "decks",
+                                ":id",
+                                "shuffled-ids"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "deck-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Get shuffled word IDs for performance optimization.\n\n**Performance Logic**:\n- Decks with ≤200 words: Returns `useBatchLoading: false`\n- Decks with >200 words: Returns shuffled IDs array\n\n**Use Case**: Frontend loads IDs first, then batch loads words"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Word Count",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/decks/:id/word-count",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "decks",
+                                ":id",
+                                "word-count"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "deck-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Get total word count in a deck."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Words",
+            "description": "Vocabulary word management endpoints",
+            "item": [
+                {
+                    "name": "Create Word",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"deckId\": \"deck-uuid-here\",\n  \"word\": \"der Hund\",\n  \"meaning\": \"dog\",\n  \"genus\": \"der\",\n  \"plural\": \"die Hunde\",\n  \"audioUrl\": \"https://example.com/audio/hund.mp3\",\n  \"isLearned\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/words",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "words"
+                            ]
+                        },
+                        "description": "Create a new word in a deck.\n\n**Authorization**: Deck owner or Admin\n\n**Fields**:\n- `deckId` (required): UUID of the deck\n- `word` (required): The German word\n- `meaning` (required): Translation/meaning\n- `genus` (optional): Article (der/die/das)\n- `plural` (optional): Plural form\n- `audioUrl` (optional): URL to audio pronunciation\n- `isLearned` (optional): Learning status (default: false)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Words by Deck",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/words/deck/:deckId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "words",
+                                "deck",
+                                ":deckId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "deckId",
+                                    "value": "deck-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Get all words in a deck.\n\n**Authorization**: Owner, Admin, or anyone if deck is public\n\n**Ordered by**: Creation date (oldest first)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Batch Load Words",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"ids\": [\n    \"word-uuid-1\",\n    \"word-uuid-2\",\n    \"word-uuid-3\"\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/words/batch",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "words",
+                                "batch"
+                            ]
+                        },
+                        "description": "Batch load multiple words by IDs.\n\n**Use Case**: Load 50-100 words at a time for large decks\n\n**Authorization**: Must have access to all requested words\n\n**Returns**: Words in the same order as requested IDs"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Word by ID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/words/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "words",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "word-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Get word by ID.\n\n**Authorization**: Owner, Admin, or anyone if deck is public"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Word",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"word\": \"die Katze\",\n  \"meaning\": \"cat\",\n  \"genus\": \"die\",\n  \"plural\": \"die Katzen\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/words/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "words",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "word-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Update word.\n\n**Authorization**: Deck owner or Admin\n\n**Note**: Cannot change `deckId`"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Toggle Learned Status",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/words/:id/toggle-learned",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "words",
+                                ":id",
+                                "toggle-learned"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "word-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Toggle the learned status of a word.\n\n**Authorization**: Deck owner or Admin"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Word",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{accessToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/words/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "words",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "word-uuid-here"
+                                }
+                            ]
+                        },
+                        "description": "Delete a word.\n\n**Authorization**: Deck owner or Admin"
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

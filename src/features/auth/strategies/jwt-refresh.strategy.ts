@@ -5,15 +5,18 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtRefreshStrategy extends PassportStrategy(
+    Strategy,
+    'jwt-refresh',
+) {
     constructor(
         private configService: ConfigService,
         private usersService: UsersService,
     ) {
         super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
             ignoreExpiration: false,
-            secretOrKey: configService.get<string>('JWT_SECRET') || 'default-secret',
+            secretOrKey: configService.get<string>('REFRESH_TOKEN_SECRET') || 'default-refresh-secret',
         });
     }
 
@@ -23,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             throw new UnauthorizedException();
         }
         return {
-            userId: payload.sub,
+            id: payload.sub,
             email: payload.email,
             role: payload.role,
         };

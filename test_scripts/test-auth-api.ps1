@@ -183,7 +183,3 @@ Write-Host "- Server is running at: http://localhost:3000/api" -ForegroundColor 
 Write-Host "- All endpoints are working correctly" -ForegroundColor Gray
 Write-Host "- Database is connected and tables are created" -ForegroundColor Gray
 Write-Host ""
-Write-Host "Next steps:" -ForegroundColor Yellow
-Write-Host "1. Configure your NeonDB connection in .env file" -ForegroundColor Gray
-Write-Host "2. Use Postman or Thunder Client for more detailed testing" -ForegroundColor Gray
-Write-Host "3. Check API_TESTING.md for more examples" -ForegroundColor Gray

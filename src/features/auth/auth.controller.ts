@@ -22,7 +22,7 @@ export class AuthController {
     @Post('refresh')
     @UseGuards(JwtRefreshGuard)
     async refresh(@Request() req) {
-        return this.authService.refreshToken(req.user.userId);
+        return this.authService.refreshToken(req.user.id);
     }
 
     @Post('forgot-password')
