@@ -91,6 +91,8 @@ Authorization: Bearer <your_access_token>
 | POST | `/words` | Create new word | Yes (Owner/Admin) |
 | GET | `/words/deck/:deckId` | Get all words in deck | Yes |
 | POST | `/words/batch` | Batch load words | Yes |
+| POST | `/words/import/:deckId` | Import words from Excel/CSV | Yes (Owner/Admin) |
+| POST | `/words/generate` | Generate words using AI | Yes (Owner/Admin) |
 | GET | `/words/:id` | Get word by ID | Yes |
 | PATCH | `/words/:id` | Update word | Yes (Owner/Admin) |
 | PATCH | `/words/:id/toggle-learned` | Toggle learned status | Yes (Owner/Admin) |
@@ -126,6 +128,26 @@ All endpoints use class-validator for input validation:
 - UUID validation
 - URL validation for audio files
 - Required field enforcement
+
+### 4. Import & AI Features 🆕
+
+**Import from Excel/CSV:**
+- Supports `.xlsx`, `.xls`, and `.csv` formats
+- Batch import multiple words at once
+- Partial success handling (continues on errors)
+- Detailed error reporting per row
+- Required columns: `word`, `meaning`
+- Optional columns: `genus`, `plural`, `audioUrl`
+
+**AI-Powered Word Generation:**
+- Generate vocabulary based on topics
+- Support for 6 difficulty levels (A1-C2)
+- Automatic article detection (der/die/das)
+- Plural forms for nouns
+- Vietnamese translations
+- Powered by Groq LLaMA 3.3 70B model
+- Maximum 50 words per request
+- Topics can be in German or Vietnamese
 
 ## 📝 Example Requests
 
@@ -181,6 +203,87 @@ Content-Type: application/json
   "ids": ["uuid1", "uuid2", "uuid3"]
 }
 ```
+
+### Import Words from Excel/CSV
+```bash
+POST /words/import/:deckId
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+
+# Form data:
+# - file: Excel (.xlsx, .xls) or CSV file
+
+# File format (Excel/CSV columns):
+# | word       | meaning    | genus | plural      | audioUrl |
+# |------------|------------|-------|-------------|----------|
+# | der Apfel  | quả táo    | der   | die Äpfel   |          |
+# | die Katze  | con mèo    | die   | die Katzen  |          |
+
+# Response:
+{
+  "statusCode": 201,
+  "message": "Import completed. 10 words imported, 0 failed",
+  "data": {
+    "imported": 10,
+    "failed": 0,
+    "errors": []
+  }
+}
+```
+
+**Using curl:**
+```bash
+curl -X POST \
+  "http://localhost:3000/words/import/DECK_ID" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "file=@path/to/words.xlsx"
+```
+
+### Generate Words with AI
+```json
+POST /words/generate
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "deckId": "uuid-here",
+  "topic": "Tiere",           // Topic in German or Vietnamese
+  "count": 10,                // Number of words (1-50)
+  "level": "A1"               // Optional: A1, A2, B1, B2, C1, C2
+}
+
+# Response:
+{
+  "statusCode": 201,
+  "message": "Successfully generated 10 words using AI",
+  "data": [
+    {
+      "id": "uuid",
+      "deckId": "deck-uuid",
+      "word": "der Hund",
+      "meaning": "con chó",
+      "genus": "der",
+      "plural": "die Hunde",
+      "audioUrl": null,
+      "isLearned": false,
+      "createdAt": "2025-11-23T15:20:00.000Z",
+      "updatedAt": "2025-11-23T15:20:00.000Z"
+    }
+    // ... more words
+  ]
+}
+```
+
+**Popular Topics:**
+- Tiere (Animals)
+- Lebensmittel (Food)
+- Familie (Family)
+- Farben (Colors)
+- Kleidung (Clothing)
+- Berufe (Professions)
+- Wetter (Weather)
+- Körperteile (Body parts)
+- Verkehrsmittel (Transportation)
 
 ## 🔄 Response Format
 
@@ -270,6 +373,8 @@ All endpoints return a consistent response format:
 - **Authentication**: JWT (Passport)
 - **Validation**: class-validator, class-transformer
 - **Password**: bcrypt
+- **File Processing**: xlsx, csv-parser, multer
+- **AI Integration**: Groq SDK (LLaMA 3.3 70B)
 
 ## 🚀 Deployment
 
@@ -284,6 +389,9 @@ JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=1h
 JWT_REFRESH_SECRET=your-refresh-secret
 JWT_REFRESH_EXPIRES_IN=7d
+
+# Groq AI
+GROQ_API_KEY=your-groq-api-key
 
 # App
 NODE_ENV=production

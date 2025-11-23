@@ -8,11 +8,15 @@ import {
     Delete,
     UseGuards,
     Request,
+    UseInterceptors,
+    UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { WordsService } from './words.service';
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
 import { BatchWordsDto } from './dto/batch-words.dto';
+import { GenerateWordsDto } from './dto/generate-words.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ApiResponse } from '../../../common/interfaces/api-response.interface';
 
@@ -71,6 +75,55 @@ export class WordsController {
         return {
             statusCode: 200,
             message: 'Words batch retrieved successfully',
+            data: words,
+        };
+    }
+
+    @Post('import/:deckId')
+    @UseInterceptors(FileInterceptor('file'))
+    async importFromFile(
+        @Request() req,
+        @Param('deckId') deckId: string,
+        @UploadedFile() file: Express.Multer.File,
+    ): Promise<ApiResponse> {
+        if (!file) {
+            return {
+                statusCode: 400,
+                message: 'No file uploaded',
+            };
+        }
+
+        const result = await this.wordsService.importFromFile(
+            req.user.id,
+            deckId,
+            file,
+            req.user.role,
+        );
+
+        return {
+            statusCode: 201,
+            message: `Import completed. ${result.imported} words imported, ${result.failed} failed`,
+            data: result,
+        };
+    }
+
+    @Post('generate')
+    async generateWithAI(
+        @Request() req,
+        @Body() generateWordsDto: GenerateWordsDto,
+    ): Promise<ApiResponse> {
+        const words = await this.wordsService.generateWithAI(
+            req.user.id,
+            generateWordsDto.deckId,
+            generateWordsDto.topic,
+            generateWordsDto.count,
+            generateWordsDto.level || 'A1',
+            req.user.role,
+        );
+
+        return {
+            statusCode: 201,
+            message: `Successfully generated ${words.length} words using AI`,
             data: words,
         };
     }

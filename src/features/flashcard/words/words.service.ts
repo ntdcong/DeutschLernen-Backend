@@ -2,6 +2,7 @@ import {
     Injectable,
     NotFoundException,
     ForbiddenException,
+    BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
@@ -10,6 +11,8 @@ import { Deck } from '../../../entities/deck.entity';
 import { UserRole } from '../../../entities/user.entity';
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
+import { GroqService, GeneratedWord } from './groq.service';
+import * as XLSX from 'xlsx';
 
 @Injectable()
 export class WordsService {
@@ -18,6 +21,7 @@ export class WordsService {
         private readonly wordRepository: Repository<Word>,
         @InjectRepository(Deck)
         private readonly deckRepository: Repository<Deck>,
+        private readonly groqService: GroqService,
     ) { }
 
     async create(
@@ -177,5 +181,134 @@ export class WordsService {
 
         word.isLearned = !word.isLearned;
         return await this.wordRepository.save(word);
+    }
+
+    async importFromFile(
+        userId: string,
+        deckId: string,
+        file: Express.Multer.File,
+        userRole: UserRole,
+    ): Promise<{ imported: number; failed: number; errors: string[] }> {
+        // Verify deck exists and user has access
+        const deck = await this.deckRepository.findOne({
+            where: { id: deckId },
+        });
+
+        if (!deck) {
+            throw new NotFoundException('Deck not found');
+        }
+
+        // Only owner can add words (unless admin)
+        if (deck.userId !== userId && userRole !== UserRole.ADMIN) {
+            throw new ForbiddenException('You can only add words to your own decks');
+        }
+
+        const fileExtension = file.originalname.split('.').pop()?.toLowerCase();
+
+        if (!['xlsx', 'xls', 'csv'].includes(fileExtension || '')) {
+            throw new BadRequestException(
+                'Invalid file format. Only Excel (.xlsx, .xls) and CSV files are supported',
+            );
+        }
+
+        try {
+            const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const data: any[] = XLSX.utils.sheet_to_json(worksheet);
+
+            let imported = 0;
+            let failed = 0;
+            const errors: string[] = [];
+
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                try {
+                    // Expected columns: word, meaning, genus (optional), plural (optional), audioUrl (optional)
+                    if (!row.word || !row.meaning) {
+                        errors.push(
+                            `Row ${i + 2}: Missing required fields (word or meaning)`,
+                        );
+                        failed++;
+                        continue;
+                    }
+
+                    const word = this.wordRepository.create({
+                        deckId: deckId,
+                        word: row.word.toString().trim(),
+                        meaning: row.meaning.toString().trim(),
+                        genus: row.genus ? row.genus.toString().trim() : undefined,
+                        plural: row.plural ? row.plural.toString().trim() : undefined,
+                        audioUrl: row.audioUrl
+                            ? row.audioUrl.toString().trim()
+                            : undefined,
+                        isLearned: false,
+                    });
+
+                    await this.wordRepository.save(word);
+                    imported++;
+                } catch (error) {
+                    errors.push(`Row ${i + 2}: ${error.message}`);
+                    failed++;
+                }
+            }
+
+            return { imported, failed, errors };
+        } catch (error) {
+            throw new BadRequestException(
+                `Failed to parse file: ${error.message}`,
+            );
+        }
+    }
+
+    async generateWithAI(
+        userId: string,
+        deckId: string,
+        topic: string,
+        count: number,
+        level: string,
+        userRole: UserRole,
+    ): Promise<Word[]> {
+        // Verify deck exists and user has access
+        const deck = await this.deckRepository.findOne({
+            where: { id: deckId },
+        });
+
+        if (!deck) {
+            throw new NotFoundException('Deck not found');
+        }
+
+        // Only owner can add words (unless admin)
+        if (deck.userId !== userId && userRole !== UserRole.ADMIN) {
+            throw new ForbiddenException('You can only add words to your own decks');
+        }
+
+        try {
+            // Generate words using Groq AI
+            const generatedWords: GeneratedWord[] =
+                await this.groqService.generateWords(topic, count, level);
+
+            // Save generated words to database
+            const savedWords: Word[] = [];
+            for (const genWord of generatedWords) {
+                const word = this.wordRepository.create({
+                    deckId: deckId,
+                    word: genWord.word,
+                    meaning: genWord.meaning,
+                    genus: genWord.genus,
+                    plural: genWord.plural,
+                    isLearned: false,
+                });
+
+                const saved = await this.wordRepository.save(word);
+                savedWords.push(saved);
+            }
+
+            return savedWords;
+        } catch (error) {
+            throw new BadRequestException(
+                `Failed to generate words: ${error.message}`,
+            );
+        }
     }
 }
