@@ -1,0 +1,759 @@
+{
+	"info": {
+		"_postman_id": "6bda24f6-335b-4eef-89ad-ca205d1ecc61",
+		"name": "DeutschLernen",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34128727"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJkdXljb25nIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTk0MTgxMzAsImV4cCI6MTc1OTUwNDUzMH0.U7ve9Z-465NRsSFYNikhR5IupnAqxPgVBqBCPMWpC1M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"teacher@gmail.com\",\r\n  \"password\": \"Password123\",\r\n  \"fullName\": \"Nguyễn Khôi\",\r\n  \"role\": \"teacher\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJkdXljb25nIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTk0MTgxMzAsImV4cCI6MTc1OTUwNDUzMH0.U7ve9Z-465NRsSFYNikhR5IupnAqxPgVBqBCPMWpC1M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"teacher@gmail.com\",\r\n  \"password\": \"Password123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNzliNTllNC00ZjJlLTQxNDYtOThmMC01ODk3ZmFkNWIyOTEiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3NjM3MzcyMzIsImV4cCI6MTc2NDM0MjAzMn0.XY-pxJsPnJqo3JOdZKeJkV4_F-7JvHSO0D5YfjKHJ7Q\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/refresh",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"admin@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/login/forgot-password",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbjEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTIzOTMzNTEsImV4cCI6MTc1MjQ3OTc1MX0.0IM31s0Jt6gfk0tgyzJYdz3ue8qHELIYVRjwxQL1GqM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNzliNTllNC00ZjJlLTQxNDYtOThmMC01ODk3ZmFkNWIyOTEiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3NjM3Mzc1MzAsImV4cCI6MTc2Mzc0MTEzMH0.JBfnFv9dmO9yc0-GdNhL4sgCDjzKY3q8bfwxjrMj2GI\",\r\n  \"newPassword\": \"newpassword123\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/login/reset-password",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get By ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MDE3MDY0Yi1kYjdkLTRlZTItYTM0My0zZjFhZTZjNWZiNGQiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzczNzcwNSwiZXhwIjoxNzYzNzQxMzA1fQ.yB6VIrgxZ41UFtmq9N-BH-JtWCd4U8YZRFoYY-qVCE4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"teacher@gmail.com\",\r\n  \"password\": \"Password123\",\r\n  \"fullName\": \"Nguyễn Khôi\",\r\n  \"role\": \"teacher\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/users/d79b59e4-4f2e-4146-98f0-5897fad5b291",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"d79b59e4-4f2e-4146-98f0-5897fad5b291"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MDE3MDY0Yi1kYjdkLTRlZTItYTM0My0zZjFhZTZjNWZiNGQiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzczNzcwNSwiZXhwIjoxNzYzNzQxMzA1fQ.yB6VIrgxZ41UFtmq9N-BH-JtWCd4U8YZRFoYY-qVCE4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"teacher@gmail.com\",\r\n  \"password\": \"Password123\",\r\n  \"fullName\": \"Nguyễn Khôi\",\r\n  \"role\": \"teacher\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Decks",
+			"item": [
+				{
+					"name": "Create Deck",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNzliNTllNC00ZjJlLTQxNDYtOThmMC01ODk3ZmFkNWIyOTEiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3NjM3NDMyNzgsImV4cCI6MTc2Mzc0Njg3OH0.C8YktTztNoGD_2g-mhf7X3hohM4CJJdGkPSh59kWWnQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Từ vựng A1\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/decks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"decks"
+							]
+						},
+						"description": "Create a new flashcard deck.\n\n**Authorization**: All authenticated users\n\n**Important**: \n- `isPublic` defaults to `false`\n- Only **Admin** can set `isPublic = true`\n- Non-admin users will have `isPublic` forced to `false`"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Decks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MDE3MDY0Yi1kYjdkLTRlZTItYTM0My0zZjFhZTZjNWZiNGQiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2Mzc0Mjk3MiwiZXhwIjoxNzYzNzQ2NTcyfQ.38oIkisJjP8A2qOumYSU8fcBzaX3qW144n0hXtkSVdE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/decks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"decks"
+							]
+						},
+						"description": "Get all accessible decks.\n\n**Returns**: User's own decks + all public decks\n\n**Ordered by**: Creation date (newest first)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deck by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/decks/5a358cec-1137-43c0-96e3-3efa961358d0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"decks",
+								"5a358cec-1137-43c0-96e3-3efa961358d0"
+							]
+						},
+						"description": "Get deck by ID with all words.\n\n**Authorization**: Owner, Admin, or anyone if deck is public"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Deck",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Deck Name\",\n  \"isPublic\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/decks/87307a19-bfd6-478b-8833-0b19c1296d7f",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"decks",
+								"87307a19-bfd6-478b-8833-0b19c1296d7f"
+							]
+						},
+						"description": "Update deck.\n\n**Authorization**: Owner or Admin\n\n**Important**: Only Admin can set `isPublic = true`"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Deck",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/decks/87307a19-bfd6-478b-8833-0b19c1296d7f",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"decks",
+								"87307a19-bfd6-478b-8833-0b19c1296d7f"
+							]
+						},
+						"description": "Delete deck and all its words (cascade).\n\n**Authorization**: Owner or Admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Word Count",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/decks/:id/word-count",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"decks",
+								":id",
+								"word-count"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "deck-uuid-here"
+								}
+							]
+						},
+						"description": "Get total word count in a deck."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Shuffled Word IDs",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/decks/:id/shuffled-ids",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"decks",
+								":id",
+								"shuffled-ids"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "deck-uuid-here"
+								}
+							]
+						},
+						"description": "Get shuffled word IDs for performance optimization.\n\n**Performance Logic**:\n- Decks with ≤200 words: Returns `useBatchLoading: false`\n- Decks with >200 words: Returns shuffled IDs array\n\n**Use Case**: Frontend loads IDs first, then batch loads words"
+					},
+					"response": []
+				}
+			],
+			"description": "Flashcard deck management endpoints"
+		},
+		{
+			"name": "Words",
+			"item": [
+				{
+					"name": "Create Word",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNzliNTllNC00ZjJlLTQxNDYtOThmMC01ODk3ZmFkNWIyOTEiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3NjM3NDMyNzgsImV4cCI6MTc2Mzc0Njg3OH0.C8YktTztNoGD_2g-mhf7X3hohM4CJJdGkPSh59kWWnQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"deckId\": \"4cb1d735-1f7c-41ce-9884-6e71e6b3e849\",\n    \"word\": \"das Auto\",\n    \"meaning\": \"Car\",\n    \"genus\": \"das\",\n    \"audioUrl\": \"https://example.com/audio/studium.mp3\"\n  }"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/words",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"words"
+							]
+						},
+						"description": "Create a new word in a deck.\n\n**Authorization**: Deck owner or Admin\n\n**Fields**:\n- `deckId` (required): UUID of the deck\n- `word` (required): The German word\n- `meaning` (required): Translation/meaning\n- `genus` (optional): Article (der/die/das)\n- `plural` (optional): Plural form\n- `audioUrl` (optional): URL to audio pronunciation\n- `isLearned` (optional): Learning status (default: false)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Words by Deck",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNzliNTllNC00ZjJlLTQxNDYtOThmMC01ODk3ZmFkNWIyOTEiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3NjM3NDMyNzgsImV4cCI6MTc2Mzc0Njg3OH0.C8YktTztNoGD_2g-mhf7X3hohM4CJJdGkPSh59kWWnQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/words/deck/4cb1d735-1f7c-41ce-9884-6e71e6b3e849",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"words",
+								"deck",
+								"4cb1d735-1f7c-41ce-9884-6e71e6b3e849"
+							]
+						},
+						"description": "Get all words in a deck.\n\n**Authorization**: Owner, Admin, or anyone if deck is public\n\n**Ordered by**: Creation date (oldest first)"
+					},
+					"response": []
+				},
+				{
+					"name": "Batch Load Words",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ids\": [\n    \"04fc0306-d924-4f3c-a247-fad9222f30b9\",\n    \"0bf10dcb-d3ad-49a9-8983-f56a012cb10b\"\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/words/batch",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"words",
+								"batch"
+							]
+						},
+						"description": "Batch load multiple words by IDs.\n\n**Use Case**: Load 50-100 words at a time for large decks\n\n**Authorization**: Must have access to all requested words\n\n**Returns**: Words in the same order as requested IDs"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Word by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/words/0bf10dcb-d3ad-49a9-8983-f56a012cb10b",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"words",
+								"0bf10dcb-d3ad-49a9-8983-f56a012cb10b"
+							]
+						},
+						"description": "Get word by ID.\n\n**Authorization**: Owner, Admin, or anyone if deck is public"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Word",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"word\": \"die Katze\",\n  \"meaning\": \"cat\",\n  \"genus\": \"die\",\n  \"plural\": \"die Katzen\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/words/0bf10dcb-d3ad-49a9-8983-f56a012cb10b",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"words",
+								"0bf10dcb-d3ad-49a9-8983-f56a012cb10b"
+							]
+						},
+						"description": "Update word.\n\n**Authorization**: Deck owner or Admin\n\n**Note**: Cannot change `deckId`"
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle Learned Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/words/0bf10dcb-d3ad-49a9-8983-f56a012cb10b/toggle-learned",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"words",
+								"0bf10dcb-d3ad-49a9-8983-f56a012cb10b",
+								"toggle-learned"
+							]
+						},
+						"description": "Toggle the learned status of a word.\n\n**Authorization**: Deck owner or Admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Word",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/words/04fc0306-d924-4f3c-a247-fad9222f30b9",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"words",
+								"04fc0306-d924-4f3c-a247-fad9222f30b9"
+							]
+						},
+						"description": "Delete a word.\n\n**Authorization**: Deck owner or Admin"
+					},
+					"response": []
+				}
+			],
+			"description": "Vocabulary word management endpoints"
+		}
+	]
+}

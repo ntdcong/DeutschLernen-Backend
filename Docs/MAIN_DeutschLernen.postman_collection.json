@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "6bda24f6-335b-4eef-89ad-ca205d1ecc61",
+		"name": "DeutschLernen",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "34128727"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJkdXljb25nIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTk0MTgxMzAsImV4cCI6MTc1OTUwNDUzMH0.U7ve9Z-465NRsSFYNikhR5IupnAqxPgVBqBCPMWpC1M"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"teacher@gmail.com\",\r\n  \"password\": \"Password123\",\r\n  \"fullName\": \"Nguyễn Khôi\",\r\n  \"role\": \"teacher\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/api/auth/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNzliNTllNC00ZjJlLTQxNDYtOThmMC01ODk3ZmFkNWIyOTEiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3NjM3MzcyMzIsImV4cCI6MTc2NDM0MjAzMn0.XY-pxJsPnJqo3JOdZKeJkV4_F-7JvHSO0D5YfjKHJ7Q\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/api/auth/refresh"
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"admin@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/api/auth/login/forgot-password"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbjEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTIzOTMzNTEsImV4cCI6MTc1MjQ3OTc1MX0.0IM31s0Jt6gfk0tgyzJYdz3ue8qHELIYVRjwxQL1GqM"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNzliNTllNC00ZjJlLTQxNDYtOThmMC01ODk3ZmFkNWIyOTEiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3NjM3Mzc1MzAsImV4cCI6MTc2Mzc0MTEzMH0.JBfnFv9dmO9yc0-GdNhL4sgCDjzKY3q8bfwxjrMj2GI\",\r\n  \"newPassword\": \"newpassword123\"\r\n}"
+						},
+						"url": "{{baseURL}}/api/auth/login/reset-password"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get By ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MDE3MDY0Yi1kYjdkLTRlZTItYTM0My0zZjFhZTZjNWZiNGQiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzczNzcwNSwiZXhwIjoxNzYzNzQxMzA1fQ.yB6VIrgxZ41UFtmq9N-BH-JtWCd4U8YZRFoYY-qVCE4"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"teacher@gmail.com\",\r\n  \"password\": \"Password123\",\r\n  \"fullName\": \"Nguyễn Khôi\",\r\n  \"role\": \"teacher\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/api/users/d79b59e4-4f2e-4146-98f0-5897fad5b291"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

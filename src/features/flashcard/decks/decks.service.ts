@@ -37,21 +37,22 @@ export class DecksService {
         return await this.deckRepository.save(deck);
     }
 
-    async findAll(userId: string, userRole: UserRole): Promise<Deck[]> {
-        // Return user's own decks + public decks
-        const decks = await this.deckRepository.find({
-            where: [{ userId }, { isPublic: true }],
-            relations: ['user'],
-            order: { createdAt: 'DESC' },
-        });
+    async findAll(userId: string, userRole: UserRole): Promise<any[]> {
+        const decks = await this.deckRepository
+            .createQueryBuilder('deck')
+            .where('deck.userId = :userId', { userId })
+            .orWhere('deck.isPublic = :isPublic', { isPublic: true })
+            .loadRelationCountAndMap('deck.wordCount', 'deck.words')
+            .orderBy('deck.createdAt', 'DESC')
+            .getMany();
 
         return decks;
     }
 
-    async findOne(id: string, userId: string, userRole: UserRole): Promise<Deck> {
+    async findOne(id: string, userId: string, userRole: UserRole): Promise<any> {
         const deck = await this.deckRepository.findOne({
             where: { id },
-            relations: ['user', 'words'],
+            relations: ['words'],
         });
 
         if (!deck) {
@@ -63,7 +64,13 @@ export class DecksService {
             throw new ForbiddenException('You do not have access to this deck');
         }
 
-        return deck;
+        // Add word count to the response
+        const wordCount = deck.words ? deck.words.length : 0;
+
+        return {
+            ...deck,
+            wordCount,
+        };
     }
 
     async update(

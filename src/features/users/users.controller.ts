@@ -60,6 +60,9 @@ export class UsersController {
             data: {
                 id: user.id,
                 fullName: user.fullName,
+                email: user.email,
+                isActive: user.isActive,
+                createdAt: user.createdAt,
             },
         };
     }
