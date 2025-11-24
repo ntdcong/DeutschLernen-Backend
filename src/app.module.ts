@@ -7,6 +7,8 @@ import { AuthModule } from './features/auth/auth.module';
 import { UsersModule } from './features/users/users.module';
 import { DecksModule } from './features/flashcard/decks/decks.module';
 import { WordsModule } from './features/flashcard/words/words.module';
+import { SentencesModule } from './features/flashcard/sentences/sentences.module';
+import { AIAssistantModule } from './features/flashcard/ai-assistant/ai-assistant.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { WordsModule } from './features/flashcard/words/words.module';
     UsersModule,
     DecksModule,
     WordsModule,
+    SentencesModule,
+    AIAssistantModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,9 +5,11 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
+    OneToMany,
     JoinColumn,
 } from 'typeorm';
 import { Deck } from './deck.entity';
+import { Sentence } from './sentence.entity';
 
 @Entity('words')
 export class Word {
@@ -38,6 +40,9 @@ export class Word {
 
     @Column({ name: 'is_learned', default: false })
     isLearned: boolean;
+
+    @OneToMany(() => Sentence, (sentence) => sentence.word)
+    sentences: Sentence[];
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
