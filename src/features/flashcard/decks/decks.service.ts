@@ -2,19 +2,25 @@ import {
     Injectable,
     NotFoundException,
     ForbiddenException,
+    BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
+import { randomUUID } from 'crypto';
 import { Deck } from '../../../entities/deck.entity';
 import { UserRole } from '../../../entities/user.entity';
 import { CreateDeckDto } from './dto/create-deck.dto';
 import { UpdateDeckDto } from './dto/update-deck.dto';
+import { PublicShareResponseDto } from './dto/public-share-response.dto';
+import { PublicDeckResponseDto } from './dto/public-deck-response.dto';
 
 @Injectable()
 export class DecksService {
     constructor(
         @InjectRepository(Deck)
         private readonly deckRepository: Repository<Deck>,
+        private readonly configService: ConfigService,
     ) { }
 
     async create(
@@ -156,5 +162,182 @@ export class DecksService {
             .getRawOne();
 
         return parseInt(result?.count || '0', 10);
+    }
+
+    // ========== PUBLIC SHARING METHODS ==========
+
+    /**
+     * Enable public sharing for a deck
+     */
+    async enablePublicShare(
+        deckId: string,
+        userId: string,
+        userRole: UserRole,
+    ): Promise<PublicShareResponseDto> {
+        const deck = await this.deckRepository.findOne({ where: { id: deckId } });
+
+        if (!deck) {
+            throw new NotFoundException('Deck not found');
+        }
+
+        // Only owner can enable public sharing
+        if (deck.userId !== userId && userRole !== UserRole.ADMIN) {
+            throw new ForbiddenException('You can only share your own decks');
+        }
+
+        // Generate new token if not exists
+        if (!deck.publicShareToken) {
+            deck.publicShareToken = randomUUID();
+        }
+
+        deck.isPublicShareable = true;
+        deck.publicShareEnabledAt = new Date();
+
+        await this.deckRepository.save(deck);
+
+        const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+        const publicShareUrl = `${frontendUrl}/public/learn/${deck.publicShareToken}`;
+
+        return {
+            publicShareToken: deck.publicShareToken!,
+            publicShareUrl,
+            isPublicShareable: deck.isPublicShareable,
+            publicShareEnabledAt: deck.publicShareEnabledAt!,
+        };
+    }
+
+    /**
+     * Disable public sharing for a deck
+     */
+    async disablePublicShare(
+        deckId: string,
+        userId: string,
+        userRole: UserRole,
+    ): Promise<void> {
+        const deck = await this.deckRepository.findOne({ where: { id: deckId } });
+
+        if (!deck) {
+            throw new NotFoundException('Deck not found');
+        }
+
+        // Only owner can disable public sharing
+        if (deck.userId !== userId && userRole !== UserRole.ADMIN) {
+            throw new ForbiddenException('You can only manage your own decks');
+        }
+
+        deck.isPublicShareable = false;
+        deck.publicShareToken = null;
+        deck.publicShareEnabledAt = null;
+
+        await this.deckRepository.save(deck);
+    }
+
+    /**
+     * Regenerate public share token
+     */
+    async regeneratePublicShareToken(
+        deckId: string,
+        userId: string,
+        userRole: UserRole,
+    ): Promise<PublicShareResponseDto> {
+        const deck = await this.deckRepository.findOne({ where: { id: deckId } });
+
+        if (!deck) {
+            throw new NotFoundException('Deck not found');
+        }
+
+        // Only owner can regenerate token
+        if (deck.userId !== userId && userRole !== UserRole.ADMIN) {
+            throw new ForbiddenException('You can only manage your own decks');
+        }
+
+        if (!deck.isPublicShareable) {
+            throw new BadRequestException('Public sharing is not enabled for this deck');
+        }
+
+        // Generate new token
+        deck.publicShareToken = randomUUID();
+        deck.publicShareEnabledAt = new Date();
+
+        await this.deckRepository.save(deck);
+
+        const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+        const publicShareUrl = `${frontendUrl}/public/learn/${deck.publicShareToken}`;
+
+        return {
+            publicShareToken: deck.publicShareToken!,
+            publicShareUrl,
+            isPublicShareable: deck.isPublicShareable,
+            publicShareEnabledAt: deck.publicShareEnabledAt!,
+        };
+    }
+
+    /**
+     * Get public deck by token (for anonymous users)
+     */
+    async getPublicDeckByToken(token: string): Promise<PublicDeckResponseDto> {
+        const deck = await this.deckRepository.findOne({
+            where: {
+                publicShareToken: token,
+                isPublicShareable: true,
+            },
+            relations: ['words', 'user'],
+        });
+
+        if (!deck) {
+            throw new NotFoundException('Public deck not found or sharing is disabled');
+        }
+
+        return {
+            id: deck.id,
+            name: deck.name,
+            wordCount: deck.words?.length || 0,
+            createdAt: deck.createdAt,
+            owner: {
+                id: deck.user.id,
+                username: deck.user.fullName,
+                email: deck.user.email,
+            },
+            words: deck.words.map((word) => ({
+                id: word.id,
+                german: word.word,
+                vietnamese: word.meaning,
+                example: null, // Word entity doesn't have example field
+            })),
+        };
+    }
+
+    /**
+     * Get public share info for a deck (for deck owner)
+     */
+    async getPublicShareInfo(
+        deckId: string,
+        userId: string,
+        userRole: UserRole,
+    ): Promise<PublicShareResponseDto | null> {
+        const deck = await this.deckRepository.findOne({ where: { id: deckId } });
+
+        if (!deck) {
+            throw new NotFoundException('Deck not found');
+        }
+
+        // Only owner can view share info
+        if (deck.userId !== userId && userRole !== UserRole.ADMIN) {
+            throw new ForbiddenException('You can only view info for your own decks');
+        }
+
+        if (!deck.isPublicShareable || !deck.publicShareToken) {
+            return null;
+        }
+
+        const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+        const publicShareUrl = `${frontendUrl}/public/learn/${deck.publicShareToken}`;
+
+        return {
+            publicShareToken: deck.publicShareToken,
+            publicShareUrl,
+            isPublicShareable: deck.isPublicShareable,
+            publicShareEnabledAt: deck.publicShareEnabledAt!,
+        };
     }
 }

@@ -29,6 +29,15 @@ export class Deck {
     @Column({ name: 'is_public', default: false })
     isPublic: boolean;
 
+    @Column({ name: 'public_share_token', type: 'varchar', nullable: true, unique: true })
+    publicShareToken: string | null;
+
+    @Column({ name: 'is_public_shareable', default: false })
+    isPublicShareable: boolean;
+
+    @Column({ name: 'public_share_enabled_at', type: 'timestamp', nullable: true })
+    publicShareEnabledAt: Date | null;
+
     @OneToMany(() => Word, (word) => word.deck, { cascade: true })
     words: Word[];
 

@@ -127,4 +127,85 @@ export class DecksController {
             data: { count },
         };
     }
+
+    // ========== PUBLIC SHARING ENDPOINTS (Authenticated) ==========
+
+    /**
+     * Enable public sharing for a deck
+     */
+    @Post(':id/public-share/enable')
+    async enablePublicShare(
+        @Request() req,
+        @Param('id') id: string,
+    ): Promise<ApiResponse> {
+        const shareInfo = await this.decksService.enablePublicShare(
+            id,
+            req.user.id,
+            req.user.role,
+        );
+
+        return {
+            statusCode: 200,
+            message: 'Public sharing enabled successfully',
+            data: shareInfo,
+        };
+    }
+
+    /**
+     * Disable public sharing for a deck
+     */
+    @Delete(':id/public-share/disable')
+    async disablePublicShare(
+        @Request() req,
+        @Param('id') id: string,
+    ): Promise<ApiResponse> {
+        await this.decksService.disablePublicShare(id, req.user.id, req.user.role);
+
+        return {
+            statusCode: 200,
+            message: 'Public sharing disabled successfully',
+        };
+    }
+
+    /**
+     * Regenerate public share token
+     */
+    @Post(':id/public-share/regenerate')
+    async regeneratePublicShareToken(
+        @Request() req,
+        @Param('id') id: string,
+    ): Promise<ApiResponse> {
+        const shareInfo = await this.decksService.regeneratePublicShareToken(
+            id,
+            req.user.id,
+            req.user.role,
+        );
+
+        return {
+            statusCode: 200,
+            message: 'Public share token regenerated successfully',
+            data: shareInfo,
+        };
+    }
+
+    /**
+     * Get public share info
+     */
+    @Get(':id/public-share/info')
+    async getPublicShareInfo(
+        @Request() req,
+        @Param('id') id: string,
+    ): Promise<ApiResponse> {
+        const shareInfo = await this.decksService.getPublicShareInfo(
+            id,
+            req.user.id,
+            req.user.role,
+        );
+
+        return {
+            statusCode: 200,
+            message: 'Public share info retrieved successfully',
+            data: shareInfo,
+        };
+    }
 }
