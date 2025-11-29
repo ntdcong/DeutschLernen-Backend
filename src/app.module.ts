@@ -10,6 +10,8 @@ import { WordsModule } from './features/flashcard/words/words.module';
 import { SentencesModule } from './features/flashcard/sentences/sentences.module';
 import { AIAssistantModule } from './features/flashcard/ai-assistant/ai-assistant.module';
 
+import { DictionaryModule } from './features/dictionary/dictionary.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,6 +25,7 @@ import { AIAssistantModule } from './features/flashcard/ai-assistant/ai-assistan
     WordsModule,
     SentencesModule,
     AIAssistantModule,
+    DictionaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
